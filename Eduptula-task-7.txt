@@ -1,0 +1,106 @@
+[linux]# git remote -vv
+linux-next	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git (fetch)
+linux-next	git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git (push)
+origin	git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git (fetch)
+origin	git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git (push)
+
+# git fetch linux-next 
+remote: Enumerating objects: 275608, done.
+remote: Counting objects: 100% (124386/124386), done.
+remote: Compressing objects: 100% (16540/16540), done.
+remote: Total 275608 (delta 112025), reused 118125 (delta 107789), pack-reused 151222 (from 1)
+Receiving objects: 100% (275608/275608), 202.63 MiB | 28.06 MiB/s, done.
+Resolving deltas: 100% (216952/216952), completed with 28349 local objects.
+From git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next
+ + 7794300bb07d...8c12e1feb4f1 fs-current    -> linux-next/fs-current  (forced update)
+ + 2cfa71eba7a0...d10270a8e5fd fs-next       -> linux-next/fs-next  (forced update)
+ + 415606a7be93...b01868671970 master        -> linux-next/master  (forced update)
+ + 2506121f6255...faea06d57a27 pending-fixes -> linux-next/pending-fixes  (forced update)
+   8ba098e6b6ff..602042bf29f6  stable        -> linux-next/stable
+ * [new tag]                   next-20261007 -> next-20261007
+ * [new tag]                   v7.2          -> v7.2
+ * [new tag]                   v7.2-rc6      -> v7.2-rc6
+ * [new tag]                   v7.2-rc7      -> v7.2-rc7
+ * [new tag]                   v7.3-rc1      -> v7.3-rc1
+ * [new tag]                   v7.3-rc2      -> v7.3-rc2
+ * [new tag]                   v7.3-rc3      -> v7.3-rc3
+ * [new tag]                   v7.3-rc4      -> v7.3-rc4
+ * [new tag]                   v7.3-rc5      -> v7.3-rc5
+ * [new tag]                   v7.3-rc6      -> v7.3-rc6
+
+# git checkout -b test-next linux-next/master 
+Updating files: 100% (19049/19049), done.
+Warning: you are leaving 1 commit behind, not connected to
+any of your branches:
+
+  5d04c06138b1 Modify Makefile with EXTRAVERSION for Eudyptula Task 03
+
+If you want to keep it by creating a new branch, this may be a good time
+to do so with:
+
+ git branch <new-branch-name> 5d04c06138b1
+
+branch 'test-next' set up to track 'linux-next/master'.
+Switched to a new branch 'test-next'
+
+$git status
+On branch test-next
+Your branch is up to date with 'linux-next/master'.
+
+nothing to commit, working tree clean
+
+
+# cp /boot/config-7.1.5-101.fc43.x86_64 .config
+cp: overwrite '.config'? y
+
+
+# make olddefconfig
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/confdata.o
+  HOSTCC  scripts/kconfig/expr.o
+  LEX     scripts/kconfig/lexer.lex.c
+  YACC    scripts/kconfig/parser.tab.[ch]
+  HOSTCC  scripts/kconfig/lexer.lex.o
+  HOSTCC  scripts/kconfig/menu.o
+  HOSTCC  scripts/kconfig/parser.tab.o
+  HOSTCC  scripts/kconfig/preprocess.o
+  HOSTCC  scripts/kconfig/symbol.o
+  HOSTCC  scripts/kconfig/util.o
+  HOSTLD  scripts/kconfig/conf
+.config:1545:warning: symbol value 'm' invalid for NETFILTER_NETLINK
+.config:7557:warning: symbol value 'm' invalid for SND_SOC_ACPI_AMD_SDCA_QUIRKS
+#
+# configuration written to .config
+#
+
+
+# make -j$(nproc)
+[..]
+  AS      arch/x86/boot/header.o
+  LD      arch/x86/boot/setup.elf
+  OBJCOPY arch/x86/boot/setup.bin
+  BUILD   arch/x86/boot/bzImage
+Kernel: arch/x86/boot/bzImage is ready  (#3)
+
+# sudo make modules_install
+[..]
+  SIGN    /lib/modules/7.3.0-rc6-next-20261007/kernel/net/qrtr/qrtr.ko
+  INSTALL /lib/modules/7.3.0-rc6-next-20261007/kernel/net/qrtr/qrtr-mhi.ko
+  SIGN    /lib/modules/7.3.0-rc6-next-20261007/kernel/net/qrtr/qrtr-mhi.ko
+  INSTALL /lib/modules/7.3.0-rc6-next-20261007/kernel/virt/lib/irqbypass.ko
+  SIGN    /lib/modules/7.3.0-rc6-next-20261007/kernel/virt/lib/irqbypass.ko
+  DEPMOD  /lib/modules/7.3.0-rc6-next-20261007
+
+# sudo make install 
+  INSTALL /boot
+
+# sudo grubby --info=ALL | grep -E "index|kernel|title"
+index=0
+kernel="/boot/vmlinuz-7.3.0-rc6-next-20261007"
+title="Fedora Linux (7.3.0-rc6-next-20261007) 43 (Server Edition)"
+[..]
+
+#reboot
+
+# uname -r
+7.3.0-rc6-next-20261007
